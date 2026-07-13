@@ -28,17 +28,21 @@ Each step includes a **description**, **expression**, **LaTeX**, and **rule appl
 - SymPy ≥ 1.13
 
 ```bash
-pip install sympy
+pip install edmaster-smartsolver
 ```
 
-*(PyPI package coming soon — for now, use the module directly from this repository.)*
+Or install SymPy only when using from source:
+
+```bash
+pip install sympy
+```
 
 ---
 
 ## Quick start
 
 ```python
-from math_step_tracker import SmartSolver, StepRenderer, serialize_solver_result
+from smartsolver import SmartSolver, StepRenderer, serialize_solver_result
 
 solver = SmartSolver()
 
@@ -52,12 +56,14 @@ payload = serialize_solver_result(result)
 print(payload["steps_latex"])
 ```
 
-When running from the Ed-Master repo root:
+When running from a git checkout (editable install):
+
+```bash
+pip install -e .
+```
 
 ```python
-from coding_sandbox.math_step_tracker import SmartSolver
-# or
-from backend.math_step_tracker import SmartSolver  # Django backend re-export
+from smartsolver import SmartSolver
 ```
 
 ---
@@ -146,7 +152,7 @@ solver.limit("sin(x)/x", "x", point="0", direction="+")
 ## Helper utilities
 
 ```python
-from math_step_tracker import (
+from smartsolver import (
     StepRenderer,
     serialize_solver_result,
     normalize_math_input,
@@ -163,17 +169,9 @@ StepRenderer.to_html(steps)
 serialize_solver_result(result)
 ```
 
-### Ed-Master Math Lab helpers
+### Optional helpers (Ed-Master Math Lab)
 
-`edmathlab.py` wraps SmartSolver for stdout-friendly output:
-
-```python
-from edmathlab import solve_steps, diff_steps, integrate_steps, limit_steps
-
-solve_steps("x^2 - 9 = 0", "x")
-diff_steps("x**3", "x")
-integrate_steps("x*exp(x)", "x")
-```
+If you also ship `edmathlab.py` alongside this package, it provides stdout-friendly wrappers. They are not included in the PyPI wheel by default.
 
 ---
 
@@ -225,7 +223,7 @@ class Step:
 ## Example session
 
 ```python
-from math_step_tracker import SmartSolver, StepRenderer
+from smartsolver import SmartSolver, StepRenderer
 
 s = SmartSolver()
 
@@ -262,17 +260,15 @@ SymPy still performs the underlying symbolic work; SmartSolver adds **annotated 
 
 ## Running tests
 
-From the Ed-Master repo (requires Django environment):
-
 ```bash
-python manage.py test backend.test_math_step_tracker.MathStepTrackerTests
+pip install -e ".[dev]"
+python -m unittest discover -s tests -v
 ```
 
-Quick local smoke test without Django:
+Or a quick smoke test:
 
 ```bash
-cd coding_sandbox
-python -c "from math_step_tracker import SmartSolver; print(SmartSolver().solve_equation('x-2=0')['solutions'])"
+python -c "from smartsolver import SmartSolver; print(SmartSolver().solve_equation('x-2=0')['solutions'])"
 ```
 
 ---
@@ -280,16 +276,15 @@ python -c "from math_step_tracker import SmartSolver; print(SmartSolver().solve_
 ## Project layout
 
 ```
-coding_sandbox/
-├── math_step_tracker.py   # SmartSolver core library
-├── edmathlab.py           # Math Lab helpers (plots + step wrappers)
-├── app.py                 # Sandbox FastAPI service
-└── README.md              # this file
+smartsolver/                 # import package
+├── __init__.py
+├── math_step_tracker.py     # SmartSolver core
+└── README.md
 
-backend/
-├── math_step_tracker.py   # re-exports for Django
-├── math_step_views.py     # POST /api/math/steps/
-└── test_math_step_tracker.py
+pyproject.toml               # PEP 517 build (no setup.py needed)
+LICENSE
+tests/
+└── test_smartsolver.py
 ```
 
 ---
@@ -313,4 +308,4 @@ backend/
 
 ## License
 
-Part of the Ed-Master project. License to be specified before PyPI release.
+MIT — see [LICENSE](../LICENSE) in the repository root.
