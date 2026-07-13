@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "edmaster-smartsolver"
+version = "0.1.0"
+description = "Step-by-step mathematics solver built on SymPy — equations, calculus, and annotated rules."
+readme = "smartsolver/README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Ed-Master", email = "support@ed-master.co.za" },
+]
+keywords = [
+    "sympy",
+    "math",
+    "step-by-step",
+    "calculus",
+    "algebra",
+    "education",
+    "solver",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Education",
+]
+dependencies = [
+    "sympy>=1.13",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "twine",
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://www.ed-master.co.za"
+Repository = "https://github.com/ed-master/smartsolver"
+Documentation = "https://github.com/ed-master/smartsolver#readme"
+
+[tool.hatch.build.targets.wheel]
+packages = ["smartsolver"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/smartsolver",
+    "/tests",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,27 @@
+# Virtual environment (do not commit — recreate with: python -m venv .venv)
+Include/
+Lib/
+Scripts/
+share/
+pyvenv.cfg
+
+# Build / publish
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Twine / secrets
+.pypirc
