@@ -24,8 +24,17 @@ Each step includes a **description**, **expression**, **LaTeX**, and **rule appl
 
 ## Requirements
 
-- Python 3.10+
-- SymPy ≥ 1.13
+- **Python 3.10+** (`requires-python` in `pyproject.toml`)
+- **SymPy ≥ 1.13**
+
+### Supported Python versions
+
+| Status | Versions |
+|--------|----------|
+| Minimum | Python **3.10** |
+| Tested | Python **3.10**, **3.11**, **3.12**, **3.13** |
+
+Only list versions you actually test. Do **not** claim support for unreleased major versions (e.g. Python 4.x or fictional 7.x).
 
 ```bash
 pip install edmaster-smartsolver
@@ -276,22 +285,21 @@ python -c "from smartsolver import SmartSolver; print(SmartSolver().solve_equati
 ## Project layout
 
 ```
-smartsolver/                 # import package
-├── __init__.py
+.                            # repository root (this folder)
+├── __init__.py              # public exports
 ├── math_step_tracker.py     # SmartSolver core
-└── README.md
-
-pyproject.toml               # PEP 517 build (no setup.py needed)
-LICENSE
-tests/
-└── test_smartsolver.py
+├── README.md
+├── LICENSE
+├── pyproject.toml           # PEP 517 build (no setup.py)
+└── tests/
+    └── test_smartsolver.py
 ```
 
 ---
 
 ## Roadmap
 
-- [ ] PyPI package (`edmaster-step-solver` or similar)
+- [x] PyPI packaging scaffold (`edmaster-smartsolver`)
 - [ ] Recursive integration by parts
 - [ ] Richer trig general solutions
 - [ ] Public “Try SmartSolver” demo page on Ed-Master
@@ -308,4 +316,4 @@ tests/
 
 ## License
 
-MIT — see [LICENSE](../LICENSE) in the repository root.
+MIT — see [LICENSE](LICENSE).

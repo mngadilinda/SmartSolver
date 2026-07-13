@@ -1,6 +1,6 @@
 """Ed-Master SmartSolver — step-by-step mathematics on SymPy."""
 
-from smartsolver.math_step_tracker import (
+from .math_step_tracker import (
     SmartSolver,
     Step,
     StepRenderer,

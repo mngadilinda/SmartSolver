@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "edmaster-smartsolver"
 version = "0.1.0"
 description = "Step-by-step mathematics solver built on SymPy — equations, calculus, and annotated rules."
-readme = "smartsolver/README.md"
+readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
@@ -30,6 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Education",
 ]
@@ -50,14 +51,17 @@ Repository = "https://github.com/ed-master/smartsolver"
 Documentation = "https://github.com/ed-master/smartsolver#readme"
 
 [tool.hatch.build.targets.wheel]
-packages = ["smartsolver"]
+# Repo root is the package source; install as the `smartsolver` import path.
+force-include = { "__init__.py" = "smartsolver/__init__.py", "math_step_tracker.py" = "smartsolver/math_step_tracker.py" }
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/smartsolver",
-    "/tests",
+    "/__init__.py",
+    "/math_step_tracker.py",
+    "/README.md",
     "/LICENSE",
     "/pyproject.toml",
+    "/tests",
 ]
 
 [tool.pytest.ini_options]

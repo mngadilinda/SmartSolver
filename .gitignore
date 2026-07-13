@@ -1,15 +1,13 @@
-# Virtual environment (do not commit — recreate with: python -m venv .venv)
-Include/
-Lib/
-Scripts/
-share/
-pyvenv.cfg
-
 # Build / publish
 dist/
 build/
 *.egg-info/
 .eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
 
 # Python
 __pycache__/
