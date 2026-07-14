@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "edmaster-smartsolver"
+name = "smartsolver"
 version = "0.1.0"
 description = "Step-by-step mathematics solver built on SymPy — equations, calculus, and annotated rules."
 readme = "README.md"
@@ -47,8 +47,8 @@ dev = [
 
 [project.urls]
 Homepage = "https://www.ed-master.co.za"
-Repository = "https://github.com/ed-master/smartsolver"
-Documentation = "https://github.com/ed-master/smartsolver#readme"
+Repository = "https://github.com/mngadilinda/SmartSolver"
+Documentation = "https://github.com/mngadilinda/SmartSolver#readme"
 
 [tool.hatch.build.targets.wheel]
 # Repo root is the package source; install as the `smartsolver` import path.

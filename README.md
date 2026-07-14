@@ -37,7 +37,7 @@ Each step includes a **description**, **expression**, **LaTeX**, and **rule appl
 Only list versions you actually test. Do **not** claim support for unreleased major versions (e.g. Python 4.x or fictional 7.x).
 
 ```bash
-pip install edmaster-smartsolver
+pip install smartsolver
 ```
 
 Or install SymPy only when using from source:
