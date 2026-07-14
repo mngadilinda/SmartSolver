@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "smartsolver"
+name = "ed-master-smartsolver"
 version = "0.1.0"
 description = "Step-by-step mathematics solver built on SymPy — equations, calculus, and annotated rules."
 readme = "README.md"

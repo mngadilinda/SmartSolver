@@ -37,7 +37,13 @@ Each step includes a **description**, **expression**, **LaTeX**, and **rule appl
 Only list versions you actually test. Do **not** claim support for unreleased major versions (e.g. Python 4.x or fictional 7.x).
 
 ```bash
-pip install smartsolver
+pip install ed-master-smartsolver
+```
+
+Import in Python (package module name is `smartsolver`):
+
+```python
+from smartsolver import SmartSolver
 ```
 
 Or install SymPy only when using from source:
@@ -299,7 +305,7 @@ python -c "from smartsolver import SmartSolver; print(SmartSolver().solve_equati
 
 ## Roadmap
 
-- [x] PyPI packaging scaffold (`edmaster-smartsolver`)
+- [x] PyPI packaging scaffold (`ed-master-smartsolver`)
 - [ ] Recursive integration by parts
 - [ ] Richer trig general solutions
 - [ ] Public “Try SmartSolver” demo page on Ed-Master
