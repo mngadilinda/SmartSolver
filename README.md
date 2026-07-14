@@ -34,7 +34,7 @@ Each step includes a **description**, **expression**, **LaTeX**, and **rule appl
 | Minimum | Python **3.10** |
 | Tested | Python **3.10**, **3.11**, **3.12**, **3.13** |
 
-Only list versions you actually test. Do **not** claim support for unreleased major versions (e.g. Python 4.x or fictional 7.x).
+Only list versions you actually test. Do **not** claim support for unreleased major versions (e.g. Python 3.x ).
 
 ```bash
 pip install ed-master-smartsolver
