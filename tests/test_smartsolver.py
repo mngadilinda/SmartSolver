@@ -43,6 +43,48 @@ class SmartSolverTests(unittest.TestCase):
         self.assertTrue(payload["steps_text"])
         self.assertTrue(StepRenderer.to_latex(raw["steps"]))
 
+    def test_linear_system_gaussian_elimination(self):
+        result = SmartSolver().solve_linear_system(
+            ["2x + 3y = 7", "x - y = 1"],
+            ["x", "y"],
+        )
+        rules = [step.rule_applied for step in result["steps"]]
+        self.assertIn("Augmented matrix", rules)
+        self.assertIn("Row elimination", rules)
+        self.assertIn("Reduced row echelon form", rules)
+        self.assertIn("Back substitution", rules)
+        self.assertEqual(result["solutions_by_variable"], {"x": "2", "y": "1"})
+
+    def test_matrix_rref(self):
+        result = SmartSolver().matrix_rref("Matrix([[2, 4, 6], [1, 3, 5]])")
+        rules = [step.rule_applied for step in result["steps"]]
+        self.assertIn("Setup", rules)
+        self.assertIn("Reduced row echelon form", rules)
+        self.assertIn("1", str(result["matrix"]))
+
+    def test_partial_derivative(self):
+        result = SmartSolver().partial_derivative("x*y + y^2", "x", ["x", "y"])
+        rules = [step.rule_applied for step in result["steps"]]
+        self.assertIn("Partial derivative setup", rules)
+        self.assertEqual(str(result["derivative"]), "y")
+
+    def test_gradient(self):
+        result = SmartSolver().gradient("x^2 + x*y", ["x", "y"])
+        rules = [step.rule_applied for step in result["steps"]]
+        self.assertIn("Gradient setup", rules)
+        self.assertIn("2*x + y", str(result["gradient"][0]))
+        self.assertIn("x", str(result["gradient"][1]))
+
+    def test_integrate_multivariable(self):
+        result = SmartSolver().integrate_multivariable(
+            "x*y",
+            ["x", "y"],
+            {"x": (0, 1), "y": (0, 2)},
+        )
+        rules = [step.rule_applied for step in result["steps"]]
+        self.assertIn("Definite integration", rules)
+        self.assertEqual(str(result["integral"]), "1")
+
 
 if __name__ == "__main__":
     unittest.main()

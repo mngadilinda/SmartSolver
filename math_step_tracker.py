@@ -870,6 +870,181 @@ class SmartSolver:
             'limit_latex': sp.latex(result),
         }
 
+    # ============ LINEAR ALGEBRA ============
+
+    def _normalize_equations(self, equations) -> List[str]:
+        if isinstance(equations, str):
+            parts = re.split(r'[;\n]+', equations)
+            return [part.strip() for part in parts if part.strip()]
+        return [str(eq).strip() for eq in equations if str(eq).strip()]
+
+    def solve_linear_system(self, equations, variables) -> Dict:
+        """
+        Solve a linear system using Gaussian elimination with row-operation steps.
+
+        Example:
+        >>> solver = SmartSolver()
+        >>> result = solver.solve_linear_system(
+        ...     ["2x + 3y = 7", "x - y = 1"],
+        ...     ["x", "y"],
+        ... )
+        """
+        from .linear_algebra import solve_linear_system_with_steps
+
+        self._begin_problem()
+        eqs = self._normalize_equations(equations)
+        var_list = [str(v).strip() for v in variables]
+        solution, rref, syms, consistent = solve_linear_system_with_steps(
+            eqs,
+            var_list,
+            self._track_step,
+        )
+
+        if not consistent:
+            self._track_step(
+                sp.Integer(0),
+                'The system is inconsistent (parallel lines / no solution).',
+                'No solution',
+            )
+            return {
+                'steps': self.step_tracker.get_solution(),
+                'solutions': [],
+                'solutions_by_variable': {},
+                'solution_latex': 'No solution',
+                'rref': rref,
+                'rref_latex': sp.latex(rref),
+                'consistent': False,
+            }
+
+        if not solution:
+            self._track_step(
+                sp.Integer(0),
+                'The system has infinitely many solutions (underdetermined).',
+                'Infinite solutions',
+            )
+            return {
+                'steps': self.step_tracker.get_solution(),
+                'solutions': [],
+                'solutions_by_variable': {},
+                'solution_latex': 'Infinitely many solutions',
+                'rref': rref,
+                'rref_latex': sp.latex(rref),
+                'consistent': True,
+            }
+
+        by_variable = {str(sym): sp.simplify(val) for sym, val in zip(syms, solution)}
+        for sym, val in by_variable.items():
+            self._track_step(
+                sp.Eq(symbols(sym), val),
+                f'Solution: {sym} = {val}',
+                'Back substitution',
+            )
+
+        return {
+            'steps': self.step_tracker.get_solution(),
+            'solutions': solution,
+            'solutions_by_variable': {k: str(v) for k, v in by_variable.items()},
+            'solution_latex': sp.latex(sp.Matrix(solution)),
+            'rref': rref,
+            'rref_latex': sp.latex(rref),
+            'consistent': True,
+        }
+
+    def matrix_rref(self, matrix) -> Dict:
+        """Row-reduce a matrix to RREF with elementary row operation steps."""
+        from .linear_algebra import matrix_rref_with_steps
+
+        self._begin_problem()
+        rref = matrix_rref_with_steps(matrix, self._track_step)
+        return {
+            'steps': self.step_tracker.get_solution(),
+            'matrix': rref,
+            'matrix_latex': sp.latex(rref),
+        }
+
+    # ============ MULTIVARIABLE CALCULUS ============
+
+    def partial_derivative(
+        self,
+        expression: str,
+        wrt: str,
+        variables: Optional[List[str]] = None,
+        order: int = 1,
+    ) -> Dict:
+        """
+        Partial derivative with respect to one variable, holding others constant.
+
+        Example:
+        >>> SmartSolver().partial_derivative("x*y + y^2", "x", ["x", "y"])
+        """
+        from .multivariable import partial_derivative_with_steps
+
+        if order < 1:
+            raise ValueError('order must be at least 1.')
+
+        self._begin_problem()
+        result, _ = partial_derivative_with_steps(
+            expression,
+            wrt,
+            variables,
+            order,
+            self._track_step,
+            self._identify_derivative_rule,
+        )
+        return {
+            'steps': self.step_tracker.get_solution(),
+            'derivative': result,
+            'derivative_latex': sp.latex(result),
+        }
+
+    def gradient(self, expression: str, variables: List[str]) -> Dict:
+        """Gradient vector of partial derivatives."""
+        from .multivariable import gradient_with_steps
+
+        self._begin_problem()
+        result, _ = gradient_with_steps(
+            expression,
+            variables,
+            self._track_step,
+            self._identify_derivative_rule,
+        )
+        return {
+            'steps': self.step_tracker.get_solution(),
+            'gradient': result,
+            'gradient_latex': sp.latex(result),
+        }
+
+    def integrate_multivariable(
+        self,
+        expression: str,
+        variables: List[str],
+        bounds: Optional[Dict[str, Any]] = None,
+    ) -> Dict:
+        """
+        Multiple integration over listed variables (definite bounds optional).
+
+        Example:
+        >>> SmartSolver().integrate_multivariable(
+        ...     "x*y",
+        ...     ["x", "y"],
+        ...     {"x": (0, 1), "y": (0, 2)},
+        ... )
+        """
+        from .multivariable import multiple_integral_with_steps
+
+        self._begin_problem()
+        result, _ = multiple_integral_with_steps(
+            expression,
+            variables,
+            bounds,
+            self._track_step,
+        )
+        return {
+            'steps': self.step_tracker.get_solution(),
+            'integral': result,
+            'integral_latex': sp.latex(result),
+        }
+
 
 class StepRenderer:
     """Render steps in various formats."""
@@ -917,25 +1092,38 @@ def serialize_solver_result(result: Dict[str, Any]) -> Dict[str, Any]:
     for key, value in result.items():
         if key == 'steps':
             payload['steps'] = [step_to_dict(step) for step in value]
-        elif key in ('derivative', 'integral', 'limit', 'decomposition'):
+        elif key in ('derivative', 'integral', 'limit', 'decomposition', 'gradient'):
+            payload[key] = str(value) if value is not None else None
+        elif key in ('matrix', 'rref'):
             payload[key] = str(value) if value is not None else None
         elif key == 'solutions':
             payload['solutions'] = [str(s) for s in value]
+        elif key == 'solutions_by_variable' and isinstance(value, dict):
+            payload[key] = value
         else:
             payload[key] = value
 
     if 'derivative' in result:
         payload['result'] = str(result['derivative'])
         payload['result_latex'] = result.get('derivative_latex')
+    elif 'gradient' in result:
+        payload['result'] = str(result['gradient'])
+        payload['result_latex'] = result.get('gradient_latex')
     elif 'integral' in result:
         payload['result'] = str(result['integral']) if result['integral'] is not None else None
         payload['result_latex'] = result.get('integral_latex')
+    elif 'matrix' in result:
+        payload['result'] = str(result['matrix'])
+        payload['result_latex'] = result.get('matrix_latex')
     elif 'decomposition' in result:
         payload['result'] = str(result['decomposition'])
         payload['result_latex'] = result.get('decomposition_latex')
     elif 'limit' in result:
         payload['result'] = str(result['limit'])
         payload['result_latex'] = result.get('limit_latex')
+    elif 'solutions_by_variable' in result and result.get('solutions_by_variable'):
+        payload['result'] = result['solutions_by_variable']
+        payload['result_latex'] = result.get('solution_latex')
     elif 'solutions' in result:
         payload['result'] = [str(s) for s in result['solutions']]
         payload['result_latex'] = result.get('solution_latex')

@@ -11,9 +11,11 @@ The implementation lives in `math_step_tracker.py` (class `SmartSolver`).
 | Area | What SmartSolver shows |
 |------|------------------------|
 | **Equations** | Linear & quadratic solving, discriminant steps |
+| **Linear algebra** | Augmented matrix setup, row swaps/scaling/elimination, RREF, back substitution |
 | **Trigonometry** | Quotient, Pythagorean, double-angle identities; tan reduction |
 | **Logarithms & exponentials** | Log product/power rules, `log(x) = c → x = e^c`, `a^x = b` |
 | **Differentiation** | Sum, product, power, chain rule labels |
+| **Multivariable calculus** | Partial derivatives, gradient vectors, multiple integrals (definite bounds) |
 | **Integration** | Partial fractions, LIATE-based integration by parts, direct rules |
 | **Limits** | Setup, direct substitution where valid, final limit |
 | **Partial fractions** | Factor denominator, decompose, integrate term-by-term |
@@ -161,6 +163,74 @@ solver.limit("sin(x)/x", "x", point="0", direction="+")
 ```
 
 **Returns:** `steps`, `limit`, `limit_latex`
+
+---
+
+### `solve_linear_system(equations, variables)`
+
+Solve a linear system with Gaussian elimination (augmented matrix, row operations, RREF, back substitution).
+
+```python
+solver.solve_linear_system(
+    ["2x + 3y = 7", "x - y = 1"],
+    ["x", "y"],
+)
+# equations can also be one string separated by newlines or semicolons
+solver.solve_linear_system("2x + 3y = 7; x - y = 1", ["x", "y"])
+```
+
+**Returns:** `steps`, `solutions`, `solutions_by_variable`, `solution_latex`, `rref`, `rref_latex`, `consistent`
+
+---
+
+### `matrix_rref(matrix)`
+
+Row-reduce a matrix to reduced row echelon form with step-by-step row operations.
+
+```python
+solver.matrix_rref("Matrix([[2, 4, 6], [1, 3, 5]])")
+solver.matrix_rref([[1, 2, 3], [0, 1, 4]])
+```
+
+**Returns:** `steps`, `matrix`, `matrix_latex`
+
+---
+
+### `partial_derivative(expression, wrt, variables=None, order=1)`
+
+Partial derivative holding other variables constant.
+
+```python
+solver.partial_derivative("x*y + y^2", "x", ["x", "y"])
+solver.partial_derivative("x^2*y", "y", ["x", "y"], order=2)
+```
+
+**Returns:** `steps`, `derivative`, `derivative_latex`
+
+---
+
+### `gradient(expression, variables)`
+
+Gradient vector of partial derivatives.
+
+```python
+solver.gradient("x^2 + x*y", ["x", "y"])
+```
+
+**Returns:** `steps`, `gradient`, `gradient_latex`
+
+---
+
+### `integrate_multivariable(expression, variables, bounds=None)`
+
+Multiple integration over listed variables. Pass `bounds` for definite integrals.
+
+```python
+solver.integrate_multivariable("x*y", ["x", "y"], {"x": (0, 1), "y": (0, 2)})
+solver.integrate_multivariable("x + y", ["x", "y"])  # indefinite
+```
+
+**Returns:** `steps`, `integral`, `integral_latex`
 
 ---
 

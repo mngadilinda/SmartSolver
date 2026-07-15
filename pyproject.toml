@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ed-master-smartsolver"
-version = "0.1.0"
+version = "0.2.0"
 description = "Step-by-step mathematics solver built on SymPy — equations, calculus, and annotated rules."
 readme = "README.md"
 license = "MIT"
@@ -52,12 +52,19 @@ Documentation = "https://github.com/mngadilinda/SmartSolver#readme"
 
 [tool.hatch.build.targets.wheel]
 # Repo root is the package source; install as the `smartsolver` import path.
-force-include = { "__init__.py" = "smartsolver/__init__.py", "math_step_tracker.py" = "smartsolver/math_step_tracker.py" }
+
+[tool.hatch.build.targets.wheel.force-include]
+"__init__.py" = "smartsolver/__init__.py"
+"math_step_tracker.py" = "smartsolver/math_step_tracker.py"
+"linear_algebra.py" = "smartsolver/linear_algebra.py"
+"multivariable.py" = "smartsolver/multivariable.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
     "/__init__.py",
     "/math_step_tracker.py",
+    "/linear_algebra.py",
+    "/multivariable.py",
     "/README.md",
     "/LICENSE",
     "/pyproject.toml",
